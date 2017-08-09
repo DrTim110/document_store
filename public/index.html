@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>DOCUMENT STORAGE!</title>
+    </head>
+    <body>
+        <form name="foarm" onsubmit="submitFile(); return false;" id="file-form">
+            <label for="filename">
+                File Name: 
+            </label>
+            <input name="filename" type="text" placeholder="file.txt"/>
+            <label for="locationid">
+                Location ID: 
+            </label>
+            <input name="locationid" type="text" placeholder="ABC123" />
+             <label for="binary">File: 
+                <input name="binary" type="file" />
+            </label> 
+            <button type="submit">Submit</button>
+        </form>
+        <div id="locations">
+        </div>
+        <script>
+            function submitFile(){
+                var form = document.getElementById('file-form');
+                console.log(new FormData(form));
+                fetch('/upload', {
+                    method:'POST', 
+                    body: new FormData(form)
+                }).then(function(res){
+                    return console.log(res);
+                }).catch(function(err){
+                    return console.error(err);
+                });
+                return false;
+            }
+
+            (function(){
+                fetch('/locations').then(function(response){
+                    return response.json();
+                }).then(function(locations){
+                    let locationDiv = document.getElementById('locations');
+                    locationDiv.innerHTML = "<h1>Locations</h1>";
+                    let locationID;
+
+                    while(locationID = locations.shift()){
+                        let location = document.createElement('h4');
+                        location.innerText = locationID;
+                        locationDiv.appendChild(location);
+                    }
+                });
+            })();
+        </script>
+    </body>
+</html>
